@@ -1,6 +1,7 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Image, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {useDispatch} from 'react-redux';
+import Loader from '../../components/Loader';
 import {
   horizontalScale,
   moderateScale,
@@ -13,11 +14,14 @@ import colors from '../../theme/colors';
 import icons from '../../theme/icons';
 
 export default function HomeScreen() {
+  const[loading,setLoading] = useState(false)
   const dispatch = useDispatch();
   var purchased_services = [];
   var addition_services = [];
   const getJson = () => {
+    setLoading(true)
     getJsonData().then(resp => {
+      setLoading(false)
       let services = resp?.data?.purchased_services;
       for (let index = 0; index < services.length; index++) {
         const main_service_label = services[index]?.name;
@@ -48,10 +52,11 @@ export default function HomeScreen() {
     });
   };
   useEffect(() => {
-    getJson();
+    getJson(); // Api Call 
   }, []);
   return (
     <SafeAreaView style={styles.safeareaViewStyle}>
+      <Loader loading={loading}/>
       <View style={styles.mainContiner}>
         <Image source={icons.ic_menu} style={styles.menuIconStyle} />
         <Text style={styles.serviceLabelStyle}>Services</Text>
